@@ -1,53 +1,77 @@
-# e2-ma-tim19-2025
-# 📱 Pokretanje Android aplikacije na fizičkom uređaju
+# HabitGame
 
-Da biste pokrenuli ovu aplikaciju na fizičkom Android telefonu, pratite sledeće korake:
+Android aplikacija za praćenje navika i obaveza u obliku igrice, urađena u okviru predmeta
+**Mobilne aplikacije** (tim 19, 2025).
 
----
+## O projektu
 
-## 🔧 1. Omogućavanje opcija za programere
+HabitGame pretvara svakodnevne obaveze u igru. Korisnik pravi zadatke (jednokratne i ponavljajuće),
+razvrstava ih po kategorijama i za svaki urađen zadatak dobija iskustvene poene (XP). Sakupljanjem XP-a
+raste nivo, a na kraju svakog nivoa čeka bitka sa bosom u kojoj se osvaja novac i oprema. Novac se troši u
+prodavnici, a oprema pojačava napad. Korisnici mogu da dodaju prijatelje (i skeniranjem QR koda), osnivaju
+saveze, šalju poruke i dobijaju push notifikacije.
 
-1. Otvorite **Podešavanja** na telefonu.
-2. Idite na **O telefonu** (*About phone*).
-3. Više puta tapnite na **Broj verzije** (*Build number*) dok se ne pojavi poruka da su *Developer options* omogućene.
+Projekat se sastoji iz dva dela:
+- `HabitGame` – Android aplikacija (Java),
+- `FcmServer` – mali Node.js server za slanje push notifikacija (Firebase Cloud Messaging).
 
----
+## Tehnologije
 
-## 🐞 2. Aktiviranje USB ispravljanja grešaka (USB Debugging)
+- Java, Android Studio, Android Navigation (fragmenti)
+- Firebase Authentication, Cloud Firestore, Cloud Messaging
+- Node.js (`FcmServer`)
+- Biblioteke: Lottie (animacije), MPAndroidChart (grafikoni), Kizitonwose Calendar i Android Week View
+  (kalendar), ZXing (QR kodovi), OkHttp
 
-1. Vratite se u glavni meni **Podešavanja**.
-2. Otvorite **Opcije za programere** (*Developer options*).
-3. Uključite opciju **USB debugging**.
+## Funkcionalnosti
 
----
+- Registracija, aktivacija naloga putem linka, prijava, promena lozinke
+- Profil, pretraga korisnika, prijatelji (uključujući dodavanje QR kodom)
+- Savezi, pozivnice, poruke i push notifikacije
+- Kategorije i zadaci, ponavljajući zadaci, kalendarski prikaz
+- XP, nivoi i titule, bitka sa bosom, prodavnica i oprema
+- Statistika i prikaz napretka
 
-## 🔌 3. Povezivanje uređaja
+## Moj doprinos
 
-1. Povežite telefon sa računarom putem USB kabla.
-2. Na telefonu potvrdite dozvolu za USB debugging kada se pojavi dijalog.
+Autor sam sledećih funkcionalnosti (drugi deo aplikacije radio je kolega, v. ispod).
 
----
+### 1. Kategorije
+- Kreiranje, izmena i prikaz kategorija zadataka, sa izborom boje (`CategoryCreationFragment`,
+  `CategoryEditBottomSheet`, `CategoryListFragment`, `CategoryAdapter`, `CategoryService`, `CategoryRepository`).
 
-## ▶️ 4. Pokretanje aplikacije iz Android Studija
+### 2. Zadaci
+- Kreiranje zadatka sa kategorijom, težinom, bitnošću i datumom izvršenja (`TaskCreationFragment`).
+- Izmena zadatka (`EditTaskFragment`), prikaz detalja (`TaskDetailsBottomSheet`) i liste zadataka (`TaskListFragment`).
+- Statusi zadatka: aktivan, urađen, neurađen, otkazan i pauziran. Zadatak se označava kao urađen ili otkazan
+  (`TaskService`), a neizvršeni zadaci se automatski prebacuju u status "neurađen".
+- Kalendarski prikazi zadataka: dnevni/nedeljni i mesečni (`TasksCalendarFragment`, `TasksMonthFragment`,
+  `TasksPagerFragment`).
 
-1. Otvorite projekat u **Android Studiju**.
-2. Sačekajte da Android Studio prepozna vaš uređaj.
-3. Izaberite telefon sa liste dostupnih uređaja.
-4. Kliknite na dugme **Run** (zelena strelica) da biste pokrenuli aplikaciju na uređaju.
+### 3. Ponavljajući zadaci
+- Kreiranje i izmena ponavljajućih zadataka (`RepeatedTaskCreateFragment`, `RepeatedTaskEditFragment`).
+- Generisanje pojedinačnih pojavljivanja po rasporedu (`RepeatedTaskService`, `RepeatedTaskOccurrenceService`,
+  `RecurrenceScheduler`) i njihov prikaz i obrada (`RepeatedTaskOccurrenceListFragment`,
+  `RepeatedTaskOccurrenceDetailsBottomSheet`).
 
----
+### 4. XP, nivoi i statistika uspeha
+- Obračun XP-a na osnovu težine, bitnosti i trenutnog nivoa (`XpCalculator`).
+- Napredovanje kroz nivoe, prag XP-a po nivou, titule, nagrade u novcu i rast snage (`LevelUtils`).
+- Dodavanje XP-a i provera prelaska na sledeći nivo pri završetku zadatka (`AccountRepository`).
+- Procenat uspešnosti zadataka u toku etape, uz poštovanje kvote (`StageMetricsService`).
 
-## ℹ️ Napomena
+### 5. Bitka sa bosom (`BattleFragment`)
+- Boss sa životnim poenima koji zavise od nivoa, i šansa pogotka računata iz uspešnosti zadataka.
+- Napad dugmetom ili **potresom telefona** (akcelerometar).
+- Animacije (Lottie) i zvučni efekti, ograničen broj pokušaja.
+- Sanduk sa nagradom (novac i oprema) koji se otvara nakon pobede.
 
-Ako uređaj ne bude prepoznat, proverite sledeće:
+### 6. Prodavnica
+- Deo logike kupovine i primene opreme (`ShopFragment`).
 
-- Da je USB režim podešen na **File Transfer / MTP**.
-- Da koristite ispravan USB kabl koji podržava prenos podataka.
-- Da su USB drajveri instalirani (za Windows korisnike).
-- Da je telefon otključan tokom povezivanja.
+## Pokretanje
 
----
-
-✅ Nakon uspešnog pokretanja, aplikacija će se pojaviti na vašem telefonu i biće spremna za korišćenje.
-
-
+1. Otvoriti folder `HabitGame` u **Android Studiju** i sačekati Gradle sinhronizaciju.
+2. Dodati sopstveni `google-services.json` iz Firebase konzole u `HabitGame/app/`.
+3. Povezati telefon sa uključenim *USB debugging*-om (ili pokrenuti emulator) i kliknuti **Run**.
+4. Za push notifikacije pokrenuti `FcmServer` (`npm install`, zatim `node index.js`) sa Firebase servisnim nalogom.
